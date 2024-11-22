@@ -1,0 +1,32 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <!-- Imagen principal del bus -->
+    <ImageView
+        android:id="@+id/iv_bus_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop" />
+
+    <!-- Detalles del bus -->
+    <TextView
+        android:id="@+id/tv_bus_id"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:text="Bus ID"
+        android:textSize="16sp" />
+
+    <!-- Botón de edición -->
+    <Button
+        android:id="@+id/btn_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Editar" />
+</LinearLayout>

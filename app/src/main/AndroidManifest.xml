@@ -16,6 +16,13 @@
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
         <activity
+            android:name=".BusEditActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication" />
+        <activity
+            android:name=".TransportHomeActivity"
+            android:exported="false" />
+        <activity
             android:name=".BusDetailsActivity"
             android:exported="false" />
         <activity
