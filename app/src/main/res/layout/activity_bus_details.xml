@@ -1,0 +1,35 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Carrusel de imágenes -->
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vp_bus_images"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+
+    <!-- Información de precios -->
+    <TextView
+        android:id="@+id/tv_ticket_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Precio unitario: S/. 1.5"
+        android:paddingTop="16dp" />
+
+    <TextView
+        android:id="@+id/tv_subscription_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Precio suscripción mensual: S/. 40.0"
+        android:paddingBottom="16dp" />
+
+    <!-- Botón de suscripción -->
+    <Button
+        android:id="@+id/btn_subscribe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Suscribirse" />
+</LinearLayout>

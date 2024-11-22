@@ -1,0 +1,29 @@
+<androidx.appcompat.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/primaryColor"
+    android:elevation="4dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    android:titleTextColor="@android:color/white">
+
+    <TextView
+        android:id="@+id/toolbar_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:text="Bienvenido, Usuario"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:paddingStart="16dp" />
+
+    <ImageButton
+        android:id="@+id/logout_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        android:src="@drawable/baseline_login_24"
+        android:contentDescription="@string/logout"
+        android:background="@android:color/transparent" />
+</androidx.appcompat.widget.Toolbar>
