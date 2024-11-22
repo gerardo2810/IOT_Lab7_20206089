@@ -85,12 +85,14 @@ public class UserHomeActivity extends AppCompatActivity {
                 try {
                     // Mapear datos de Firestore a objeto Bus
                     String id = document.getId();
-                    String imageUrl = document.getString("imageUrl");
+                    String mainImageUrl = document.getString("mainImageUrl");
+                    List<String> imageUrls = (List<String>) document.get("imageUrls");
                     double ticketPrice = document.getDouble("ticketPrice");
                     double subscriptionPrice = document.getDouble("subscriptionPrice");
 
-                    if (id != null && imageUrl != null) {
-                        buses.add(new Bus(id, imageUrl, ticketPrice, subscriptionPrice));
+                    // Crear objeto Bus
+                    if (id != null && mainImageUrl != null && imageUrls != null) {
+                        buses.add(new Bus(id, mainImageUrl, imageUrls, ticketPrice, subscriptionPrice));
                     }
                 } catch (Exception e) {
                     Toast.makeText(this, "Error al procesar datos del bus: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -104,6 +106,7 @@ public class UserHomeActivity extends AppCompatActivity {
             Toast.makeText(this, "Error al obtener datos de los buses: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
+
 
     private void logout() {
         auth.signOut();

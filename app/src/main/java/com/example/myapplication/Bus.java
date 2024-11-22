@@ -1,10 +1,12 @@
 package com.example.myapplication;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Bus implements Serializable { // Implementar Serializable
     private String id;
-    private String imageUrl;
+    private String mainImageUrl;
+    private List<String> imageUrls; // Lista de URLs para el carrusel
     private double ticketPrice;
     private double subscriptionPrice;
 
@@ -13,9 +15,10 @@ public class Bus implements Serializable { // Implementar Serializable
     }
 
     // Constructor
-    public Bus(String id, String imageUrl, double ticketPrice, double subscriptionPrice) {
+    public Bus(String id, String mainImageUrl, List<String> imageUrls, double ticketPrice, double subscriptionPrice) {
         this.id = id;
-        this.imageUrl = imageUrl;
+        this.mainImageUrl = mainImageUrl;
+        this.imageUrls = imageUrls;
         this.ticketPrice = ticketPrice;
         this.subscriptionPrice = subscriptionPrice;
     }
@@ -29,12 +32,20 @@ public class Bus implements Serializable { // Implementar Serializable
         this.id = id;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getMainImageUrl() {
+        return mainImageUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setMainImageUrl(String mainImageUrl) {
+        this.mainImageUrl = mainImageUrl;
+    }
+
+    public List<String> getImageUrls() {
+        return imageUrls;
+    }
+
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
     }
 
     public double getTicketPrice() {

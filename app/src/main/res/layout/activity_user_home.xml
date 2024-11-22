@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start|center_vertical"
             android:text="Bienvenido, Usuario"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:textSize="18sp"
             android:paddingStart="16dp" />
 
@@ -33,6 +33,7 @@
             android:contentDescription="@string/logout"
             android:background="@android:color/transparent" />
     </androidx.appcompat.widget.Toolbar>
+
 
     <!-- Saldo -->
     <TextView
