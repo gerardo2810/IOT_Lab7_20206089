@@ -82,7 +82,6 @@ public class TransportHomeActivity extends AppCompatActivity {
             List<Bus> buses = new ArrayList<>();
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                 try {
-                    // Extraer datos del documento
                     String id = document.getId();
                     String imageUrl = document.getString("mainImageUrl");
                     double ticketPrice = document.getDouble("ticketPrice");

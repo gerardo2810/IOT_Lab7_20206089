@@ -37,11 +37,11 @@ public class RegisterActivity extends AppCompatActivity {
         registerUserButton = findViewById(R.id.registerUserButton);
 
         registerUserButton.setOnClickListener(v -> {
-            String name = nameEditText.getText().toString();
-            String lastname = lastnameEditText.getText().toString();
-            String email = registerEmailEditText.getText().toString();
-            String password = registerPasswordEditText.getText().toString();
-            String confirmPassword = confirmPasswordEditText.getText().toString();
+            String name = nameEditText.getText().toString().trim();
+            String lastname = lastnameEditText.getText().toString().trim();
+            String email = registerEmailEditText.getText().toString().trim();
+            String password = registerPasswordEditText.getText().toString().trim();
+            String confirmPassword = confirmPasswordEditText.getText().toString().trim();
 
             if (name.isEmpty() || lastname.isEmpty()) {
                 Toast.makeText(this, "Complete todos los campos", Toast.LENGTH_SHORT).show();
@@ -70,8 +70,8 @@ public class RegisterActivity extends AppCompatActivity {
                             // Obtener UID del usuario recién creado
                             String userId = auth.getCurrentUser().getUid();
 
-                            // Crear un objeto User para guardar en Firestore
-                            User user = new User(name, lastname, email);
+                            // Crear un objeto User para guardar en Firestore, asignando el rol "users"
+                            User user = new User(name, lastname, email, "usuario");
 
                             // Guardar el usuario en Firestore
                             db.collection("users").document(userId).set(user)
@@ -100,15 +100,17 @@ public class RegisterActivity extends AppCompatActivity {
         private String nombre;
         private String apellido;
         private String email;
+        private String role; // Rol del usuario
 
         public User() {
             // Constructor vacío requerido por Firestore
         }
 
-        public User(String nombre, String apellido, String email) {
+        public User(String nombre, String apellido, String email, String role) {
             this.nombre = nombre;
             this.apellido = apellido;
             this.email = email;
+            this.role = role;
         }
 
         public String getNombre() {
@@ -133,6 +135,14 @@ public class RegisterActivity extends AppCompatActivity {
 
         public void setEmail(String email) {
             this.email = email;
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
         }
     }
 }

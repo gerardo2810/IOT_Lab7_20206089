@@ -114,10 +114,13 @@ public class UserHomeActivity extends AppCompatActivity {
                     List<String> imageUrls = (List<String>) document.get("imageUrls");
                     double ticketPrice = document.getDouble("ticketPrice");
                     double subscriptionPrice = document.getDouble("subscriptionPrice");
+                    boolean hasSubscription = document.getBoolean("hasSubscription") != null
+                            ? document.getBoolean("hasSubscription")
+                            : false; // Valor predeterminado si no está presente
 
                     // Crear objeto Bus
                     if (id != null && mainImageUrl != null && imageUrls != null) {
-                        buses.add(new Bus(id, mainImageUrl, imageUrls, ticketPrice, subscriptionPrice));
+                        buses.add(new Bus(id, mainImageUrl, imageUrls, ticketPrice, subscriptionPrice, hasSubscription));
                     }
                 } catch (Exception e) {
                     Toast.makeText(this, "Error al procesar datos del bus: " + e.getMessage(), Toast.LENGTH_SHORT).show();
