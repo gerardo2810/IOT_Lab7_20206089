@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +24,6 @@ public class TransportHomeActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private TextView userNameText;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,31 +35,37 @@ public class TransportHomeActivity extends AppCompatActivity {
 
         rvBusLines = findViewById(R.id.rv_transport_bus_lines);
         tvRevenue = findViewById(R.id.tv_transport_revenue);
-        userNameText = findViewById(R.id.toolbar_user_name); // Referencia al TextView dentro del Toolbar
+        userNameText = findViewById(R.id.toolbar_user_name);
+
+        // Manejar logout
+        ImageButton logoutButton = findViewById(R.id.logout_button);
+        logoutButton.setOnClickListener(v -> logout());
 
         // Configurar RecyclerView
         rvBusLines.setLayoutManager(new LinearLayoutManager(this));
+        fetchUserName();
         fetchBusLines();
         calculateRevenue();
     }
+
     private void fetchUserName() {
         String userId = auth.getCurrentUser().getUid();
         db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
-                // Verificar si los campos existen
+                // Obtener nombre y apellido del usuario
                 String nombre = documentSnapshot.getString("nombre");
                 String apellido = documentSnapshot.getString("apellido");
 
-                // Imprimir en consola para depuración
+                // Depuración en consola
                 System.out.println("Nombre: " + nombre);
                 System.out.println("Apellido: " + apellido);
 
+                // Actualizar texto del toolbar
                 if (nombre != null && apellido != null) {
-                    // Actualizar el texto en el Toolbar
                     userNameText.setText("Bienvenido, " + nombre + " " + apellido);
                 } else {
                     userNameText.setText("Bienvenido, Usuario");
-                    Toast.makeText(this, "Faltan datos de nombre y apellido del usuario.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Faltan datos del usuario.", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 userNameText.setText("Bienvenido, Usuario");
@@ -70,7 +76,6 @@ public class TransportHomeActivity extends AppCompatActivity {
             Toast.makeText(this, "Error al obtener datos del usuario: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
-
 
     private void fetchBusLines() {
         db.collection("buses").get().addOnSuccessListener(queryDocumentSnapshots -> {
@@ -101,6 +106,9 @@ public class TransportHomeActivity extends AppCompatActivity {
             } else {
                 tvRevenue.setText("Monto recaudado: S/. 0.0");
             }
+        }).addOnFailureListener(e -> {
+            tvRevenue.setText("Monto recaudado: S/. 0.0");
+            Toast.makeText(this, "Error al obtener el monto recaudado: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
 
