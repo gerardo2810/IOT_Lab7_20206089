@@ -81,13 +81,20 @@ public class TransportHomeActivity extends AppCompatActivity {
         db.collection("buses").get().addOnSuccessListener(queryDocumentSnapshots -> {
             List<Bus> buses = new ArrayList<>();
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                String id = document.getId();
-                String imageUrl = document.getString("mainImageUrl");
-                double ticketPrice = document.getDouble("ticketPrice");
-                double subscriptionPrice = document.getDouble("subscriptionPrice");
-                List<String> gallery = (List<String>) document.get("galleryImages");
+                try {
+                    // Extraer datos del documento
+                    String id = document.getId();
+                    String imageUrl = document.getString("mainImageUrl");
+                    double ticketPrice = document.getDouble("ticketPrice");
+                    double subscriptionPrice = document.getDouble("subscriptionPrice");
+                    boolean hasSubscription = document.getBoolean("hasSubscription") != null ? document.getBoolean("hasSubscription") : false;
+                    List<String> gallery = (List<String>) document.get("imageUrls");
 
-                buses.add(new Bus(id, imageUrl, gallery, ticketPrice, subscriptionPrice));
+                    // Crear objeto Bus
+                    buses.add(new Bus(id, imageUrl, gallery, ticketPrice, subscriptionPrice, hasSubscription));
+                } catch (Exception e) {
+                    Toast.makeText(this, "Error al procesar datos del bus: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
 
             // Configurar RecyclerView con datos de Firestore
@@ -101,8 +108,12 @@ public class TransportHomeActivity extends AppCompatActivity {
     private void calculateRevenue() {
         db.collection("revenue").document("monthly").get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
-                double revenue = documentSnapshot.getDouble("total");
-                tvRevenue.setText("Monto recaudado: S/. " + revenue);
+                Double revenue = documentSnapshot.getDouble("total");
+                if (revenue != null) {
+                    tvRevenue.setText("Monto recaudado: S/. " + revenue);
+                } else {
+                    tvRevenue.setText("Monto recaudado: S/. 0.0");
+                }
             } else {
                 tvRevenue.setText("Monto recaudado: S/. 0.0");
             }
