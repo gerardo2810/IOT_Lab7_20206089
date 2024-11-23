@@ -4,14 +4,16 @@ public class User {
     private String nombre;
     private String apellido;
     private String email;
+    private String role; // Agregado para identificar el rol del usuario
 
     public User() {
     }
 
-    public User(String nombre, String apellido, String email) {
+    public User(String nombre, String apellido, String email, String role) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
+        this.role = role;
     }
 
     // Getters y Setters
@@ -37,5 +39,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

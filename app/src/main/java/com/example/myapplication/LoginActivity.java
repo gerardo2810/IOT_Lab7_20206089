@@ -10,11 +10,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
     private Button loginButton, registerButton;
+    private FirebaseAuth auth;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +30,8 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.loginButton);
         registerButton = findViewById(R.id.registerButton);
 
-        FirebaseAuth auth = FirebaseAuth.getInstance();
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         loginButton.setOnClickListener(v -> {
             String email = emailEditText.getText().toString().trim();
@@ -45,12 +50,20 @@ public class LoginActivity extends AppCompatActivity {
             auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
-                            // Navegar a la pantalla principal (UserHomeActivity)
-                            Intent intent = new Intent(this, UserHomeActivity.class);
-                            intent.putExtra("email", email); // Pasar datos si es necesario
-                            startActivity(intent);
-                            finish(); // Finalizar LoginActivity para evitar volver atrás
+                            String userId = auth.getCurrentUser().getUid();
+
+                            // Obtener datos del usuario desde Firestore
+                            db.collection("users").document(userId).get()
+                                    .addOnSuccessListener(documentSnapshot -> {
+                                        if (documentSnapshot.exists()) {
+                                            redirectToActivity(documentSnapshot);
+                                        } else {
+                                            Toast.makeText(this, "Usuario no encontrado en Firestore.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(this, "Error al obtener datos del usuario: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    });
                         } else {
                             Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -65,5 +78,27 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isValidEmail(String email) {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    private void redirectToActivity(DocumentSnapshot documentSnapshot) {
+        String role = documentSnapshot.getString("role");
+
+        if ("operativo".equalsIgnoreCase(role)) {
+            // Redirigir a UserHomeActivity
+            Intent intent = new Intent(this, UserHomeActivity.class);
+            intent.putExtra("nombre", documentSnapshot.getString("nombre"));
+            intent.putExtra("apellido", documentSnapshot.getString("apellido"));
+            startActivity(intent);
+            finish(); // Finalizar LoginActivity
+        } else if ("transportista".equalsIgnoreCase(role)) {
+            // Redirigir a TransportHomeActivity
+            Intent intent = new Intent(this, TransportHomeActivity.class);
+            intent.putExtra("nombre", documentSnapshot.getString("nombre"));
+            intent.putExtra("apellido", documentSnapshot.getString("apellido"));
+            startActivity(intent);
+            finish(); // Finalizar LoginActivity
+        } else {
+            Toast.makeText(this, "Rol no reconocido.", Toast.LENGTH_SHORT).show();
+        }
     }
 }
