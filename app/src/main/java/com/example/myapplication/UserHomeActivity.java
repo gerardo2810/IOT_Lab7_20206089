@@ -12,14 +12,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UserHomeActivity extends AppCompatActivity {
     private RecyclerView rvBusLines;
     private TextView tvBalance;
-    private double balance = 50.0; // Inicializar saldo por defecto
+    private double balance = 50.0; // Saldo inicial predeterminado
     private FirebaseAuth auth;
     private FirebaseFirestore db;
     private TextView userNameText;
@@ -38,15 +41,12 @@ public class UserHomeActivity extends AppCompatActivity {
         userNameText = findViewById(R.id.toolbar_user_name); // Referencia al TextView dentro del Toolbar
         findViewById(R.id.logout_button).setOnClickListener(v -> logout());
 
-        // Obtener nombre del usuario logueado
+        // Obtener nombre del usuario logueado y su saldo
         fetchUserName();
 
         // Configurar RecyclerView
         rvBusLines.setLayoutManager(new LinearLayoutManager(this));
         fetchBusesFromDatabase();
-
-        // Mostrar saldo
-        tvBalance.setText("Saldo restante: S/. " + balance);
     }
 
     private void fetchUserName() {
@@ -57,25 +57,50 @@ public class UserHomeActivity extends AppCompatActivity {
                 String nombre = documentSnapshot.getString("nombre");
                 String apellido = documentSnapshot.getString("apellido");
 
-                // Imprimir en consola para depuración
-                System.out.println("Nombre: " + nombre);
-                System.out.println("Apellido: " + apellido);
+                // Manejar el caso de balance null y establecer un saldo inicial si no existe
+                Double balanceValue = documentSnapshot.getDouble("balance");
+                if (balanceValue != null) {
+                    balance = balanceValue;
+                } else {
+                    initializeUserBalance(userId);
+                }
 
+                // Mostrar el saldo actualizado
+                tvBalance.setText("Saldo restante: S/. " + balance);
+
+                // Actualizar el texto en el Toolbar
                 if (nombre != null && apellido != null) {
-                    // Actualizar el texto en el Toolbar
                     userNameText.setText("Bienvenido, " + nombre + " " + apellido);
                 } else {
                     userNameText.setText("Bienvenido, Usuario");
                     Toast.makeText(this, "Faltan datos de nombre y apellido del usuario.", Toast.LENGTH_SHORT).show();
                 }
             } else {
+                // Si el documento no existe, inicializar el saldo y mostrar valores predeterminados
+                initializeUserBalance(userId);
+                tvBalance.setText("Saldo restante: S/. " + balance);
                 userNameText.setText("Bienvenido, Usuario");
                 Toast.makeText(this, "No se encontraron datos del usuario.", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(e -> {
+            tvBalance.setText("Saldo restante: S/. " + balance);
             userNameText.setText("Bienvenido, Usuario");
             Toast.makeText(this, "Error al obtener datos del usuario: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
+    }
+
+    private void initializeUserBalance(String userId) {
+        // Establecer el saldo inicial a 50 soles en Firestore
+        Map<String, Object> userUpdate = new HashMap<>();
+        userUpdate.put("balance", 50.0);
+        db.collection("users").document(userId).set(userUpdate, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> {
+                    balance = 50.0;
+                    tvBalance.setText("Saldo restante: S/. " + balance);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al inicializar el saldo: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void fetchBusesFromDatabase() {
@@ -106,7 +131,6 @@ public class UserHomeActivity extends AppCompatActivity {
             Toast.makeText(this, "Error al obtener datos de los buses: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
-
 
     private void logout() {
         auth.signOut();

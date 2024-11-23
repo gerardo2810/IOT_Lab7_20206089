@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
     private void redirectToActivity(DocumentSnapshot documentSnapshot) {
         String role = documentSnapshot.getString("role");
 
-        if ("operativo".equalsIgnoreCase(role)) {
+        if ("usuario".equalsIgnoreCase(role)) {
             // Redirigir a UserHomeActivity
             Intent intent = new Intent(this, UserHomeActivity.class);
             intent.putExtra("nombre", documentSnapshot.getString("nombre"));
