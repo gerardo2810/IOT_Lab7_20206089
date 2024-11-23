@@ -21,6 +21,8 @@ public class TransportHomeActivity extends AppCompatActivity {
     private TextView tvRevenue;
     private FirebaseAuth auth;
     private FirebaseFirestore db;
+    private TextView userNameText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +35,42 @@ public class TransportHomeActivity extends AppCompatActivity {
 
         rvBusLines = findViewById(R.id.rv_transport_bus_lines);
         tvRevenue = findViewById(R.id.tv_transport_revenue);
+        userNameText = findViewById(R.id.toolbar_user_name); // Referencia al TextView dentro del Toolbar
 
         // Configurar RecyclerView
         rvBusLines.setLayoutManager(new LinearLayoutManager(this));
         fetchBusLines();
         calculateRevenue();
     }
+    private void fetchUserName() {
+        String userId = auth.getCurrentUser().getUid();
+        db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                // Verificar si los campos existen
+                String nombre = documentSnapshot.getString("nombre");
+                String apellido = documentSnapshot.getString("apellido");
+
+                // Imprimir en consola para depuración
+                System.out.println("Nombre: " + nombre);
+                System.out.println("Apellido: " + apellido);
+
+                if (nombre != null && apellido != null) {
+                    // Actualizar el texto en el Toolbar
+                    userNameText.setText("Bienvenido, " + nombre + " " + apellido);
+                } else {
+                    userNameText.setText("Bienvenido, Usuario");
+                    Toast.makeText(this, "Faltan datos de nombre y apellido del usuario.", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                userNameText.setText("Bienvenido, Usuario");
+                Toast.makeText(this, "No se encontraron datos del usuario.", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(e -> {
+            userNameText.setText("Bienvenido, Usuario");
+            Toast.makeText(this, "Error al obtener datos del usuario: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+    }
+
 
     private void fetchBusLines() {
         db.collection("buses").get().addOnSuccessListener(queryDocumentSnapshots -> {
@@ -75,6 +107,13 @@ public class TransportHomeActivity extends AppCompatActivity {
     private void onEditBusClicked(Bus bus) {
         Intent intent = new Intent(this, BusEditActivity.class);
         intent.putExtra("bus", bus);
+        startActivity(intent);
+    }
+
+    private void logout() {
+        auth.signOut();
+        Intent intent = new Intent(TransportHomeActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 }
