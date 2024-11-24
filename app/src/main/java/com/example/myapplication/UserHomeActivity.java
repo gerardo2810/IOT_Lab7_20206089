@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,7 @@ public class UserHomeActivity extends AppCompatActivity {
         // Configurar RecyclerView
         rvBusLines.setLayoutManager(new LinearLayoutManager(this));
         fetchBusesFromDatabase();
+        configureQRButton();
     }
 
     private void fetchUserName() {
@@ -140,6 +142,13 @@ public class UserHomeActivity extends AppCompatActivity {
         Intent intent = new Intent(UserHomeActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+    private void configureQRButton() {
+        Button qrScanButton = findViewById(R.id.btn_qr_scan);
+        qrScanButton.setOnClickListener(v -> {
+            Intent intent = new Intent(UserHomeActivity.this, QRScanActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void onBusDetailsClicked(Bus bus) {
