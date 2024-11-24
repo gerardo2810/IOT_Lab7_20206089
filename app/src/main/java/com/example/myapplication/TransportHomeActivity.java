@@ -29,8 +29,6 @@ public class TransportHomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transport_home);
-
-        // Inicializar Firebase Auth y Firestore
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
@@ -38,11 +36,9 @@ public class TransportHomeActivity extends AppCompatActivity {
         tvRevenue = findViewById(R.id.tv_transport_revenue);
         userNameText = findViewById(R.id.toolbar_user_name);
 
-        // Manejar logout
         ImageButton logoutButton = findViewById(R.id.logout_button);
         logoutButton.setOnClickListener(v -> logout());
 
-        // Configurar RecyclerView
         rvBusLines.setLayoutManager(new LinearLayoutManager(this));
         fetchUserName();
         fetchBusLines();
@@ -53,15 +49,12 @@ public class TransportHomeActivity extends AppCompatActivity {
         String userId = auth.getCurrentUser().getUid();
         db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
-                // Obtener nombre y apellido del usuario
                 String nombre = documentSnapshot.getString("nombre");
                 String apellido = documentSnapshot.getString("apellido");
 
-                // Depuración en consola
                 System.out.println("Nombre: " + nombre);
                 System.out.println("Apellido: " + apellido);
 
-                // Actualizar texto del toolbar
                 if (nombre != null && apellido != null) {
                     userNameText.setText("Bienvenido, " + nombre + " " + apellido);
                 } else {

@@ -66,16 +66,14 @@ public class TransportBusAdapter extends RecyclerView.Adapter<TransportBusAdapte
             tvBusId.setText(bus.getId());
 
 
-            // Limpia el ImageView para evitar que Glide cargue imágenes incorrectas en vistas recicladas
             Glide.with(itemView.getContext()).clear(ivBusImage);
 
-            // Cargar la imagen del bus desde la URL
             Glide.with(itemView.getContext())
                     .load(bus.getMainImageUrl())
-                    .diskCacheStrategy(DiskCacheStrategy.NONE) // Opcional para evitar caché (solo para pruebas)
-                    .skipMemoryCache(true) // Opcional para evitar caché en memoria (solo para pruebas)
-                    .placeholder(R.drawable.baseline_fireplace_24) // Imagen mientras carga
-                    .error(R.drawable.baseline_error_24) // Imagen en caso de error
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .placeholder(R.drawable.baseline_fireplace_24)
+                    .error(R.drawable.baseline_error_24)
                     .into(ivBusImage);
 
             // Listener para el botón de editar

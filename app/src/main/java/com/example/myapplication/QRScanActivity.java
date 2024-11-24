@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -8,6 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+import com.journeyapps.barcodescanner.CaptureActivity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +23,7 @@ public class QRScanActivity extends AppCompatActivity {
     private double balance;
     private String userId;
 
-    private long entryTime; // Para calcular la duración del viaje
+    private long entryTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,12 +34,20 @@ public class QRScanActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         userId = auth.getCurrentUser().getUid();
 
-        // Obtener saldo inicial del usuario
         fetchUserBalance();
-
-        // Simular escaneo del QR
-        simulateQRScan("busID_123", true); // Escanear al ingresar
-        simulateQRScan("busID_123", false); // Escanear al retirarse
+        findViewById(R.id.btn_simulate_qr_scan).setOnClickListener(v -> startQRScanner());
+        simulateQRScan("IM11", true);
+        simulateQRScan("IM23", false);
+    }
+    private void startQRScanner() {
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
+        integrator.setPrompt("Escanea el código QR");
+        integrator.setCameraId(0); // Cámara trasera
+        integrator.setBeepEnabled(true);
+        integrator.setOrientationLocked(false);
+        integrator.setCaptureActivity(CaptureActivity.class);
+        integrator.initiateScan();
     }
 
     private void fetchUserBalance() {
@@ -106,12 +118,26 @@ public class QRScanActivity extends AppCompatActivity {
         Toast.makeText(this, "Salida registrada. Cashback recibido: S/. " + cashback +
                 ". Saldo actual: S/. " + balance, Toast.LENGTH_SHORT).show();
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @NonNull Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
+        if (result != null) {
+            if (result.getContents() != null) {
+                String qrContent = result.getContents();
+                Toast.makeText(this, "Código QR escaneado: " + qrContent, Toast.LENGTH_SHORT).show();
+
+                simulateQRScan(qrContent, qrContent.contains("entrada"));
+            } else {
+                Toast.makeText(this, "Escaneo cancelado", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     private void updateBalance() {
         db.collection("users").document(userId)
                 .update("balance", balance)
                 .addOnSuccessListener(aVoid -> {
-                    // Saldo actualizado en Firestore
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error al actualizar el saldo: " + e.getMessage(), Toast.LENGTH_SHORT).show();

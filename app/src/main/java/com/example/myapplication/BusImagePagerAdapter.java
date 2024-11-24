@@ -38,7 +38,6 @@ public class BusImagePagerAdapter extends PagerAdapter {
         View view = LayoutInflater.from(context).inflate(R.layout.item_bus_image, container, false);
         ImageView imageView = view.findViewById(R.id.iv_bus_image);
 
-        // Cargar imagen con Glide
         Glide.with(context)
                 .load(imageUrls.get(position))
                 .into(imageView);

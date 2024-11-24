@@ -5,13 +5,11 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Lista de imágenes del carrusel -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_gallery_images"
         android:layout_width="match_parent"
         android:layout_height="300dp" />
 
-    <!-- Añadir nueva imagen -->
     <EditText
         android:id="@+id/et_new_image_url"
         android:layout_width="match_parent"
@@ -24,7 +22,6 @@
         android:layout_height="wrap_content"
         android:text="Añadir imagen" />
 
-    <!-- Guardar cambios -->
     <Button
         android:id="@+id/btn_save_changes"
         android:layout_width="match_parent"

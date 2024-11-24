@@ -19,12 +19,10 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
     private List<Bus> busList;
     private OnBusClickListener listener;
 
-    // Interfaz para manejar clics en los elementos de la lista
     public interface OnBusClickListener {
         void onBusClick(Bus bus);
     }
 
-    // Constructor del adaptador
     public BusAdapter(List<Bus> busList, OnBusClickListener listener) {
         this.busList = busList;
         this.listener = listener;
@@ -47,7 +45,6 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
 
     @Override
     public int getItemCount() {
-        // Retornar la cantidad de elementos en la lista
         return busList.size();
     }
 
@@ -58,22 +55,18 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
 
         public BusViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Inicializar las vistas del layout
             tvBusId = itemView.findViewById(R.id.tv_bus_id);
             ivBusImage = itemView.findViewById(R.id.iv_bus_image);
             btnDetails = itemView.findViewById(R.id.btn_details);
         }
 
         public void bind(Bus bus, OnBusClickListener listener) {
-            // Configurar el texto del ID del bus
             tvBusId.setText(bus.getId());
 
-            // Cargar la imagen principal del bus usando Glide
             Glide.with(itemView.getContext())
                     .load(bus.getMainImageUrl()) // Método corregido para obtener la URL de la imagen principal
                     .into(ivBusImage);
 
-            // Configurar el clic en el botón de detalles
             btnDetails.setOnClickListener(v -> listener.onBusClick(bus));
         }
     }

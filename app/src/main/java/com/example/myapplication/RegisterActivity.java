@@ -63,21 +63,16 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
-            // Crear usuario en Firebase Authentication
             auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            // Obtener UID del usuario recién creado
                             String userId = auth.getCurrentUser().getUid();
 
-                            // Crear un objeto User para guardar en Firestore, asignando el rol "users"
                             User user = new User(name, lastname, email, "usuario");
 
-                            // Guardar el usuario en Firestore
                             db.collection("users").document(userId).set(user)
                                     .addOnSuccessListener(aVoid -> {
                                         Toast.makeText(this, "Usuario registrado exitosamente", Toast.LENGTH_SHORT).show();
-                                        // Navegar a la pantalla de login o inicio
                                         startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                                         finish();
                                     })
@@ -95,7 +90,6 @@ public class RegisterActivity extends AppCompatActivity {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    // Clase para mapear los datos del usuario
     public static class User {
         private String nombre;
         private String apellido;
@@ -103,7 +97,6 @@ public class RegisterActivity extends AppCompatActivity {
         private String role; // Rol del usuario
 
         public User() {
-            // Constructor vacío requerido por Firestore
         }
 
         public User(String nombre, String apellido, String email, String role) {

@@ -11,11 +11,9 @@ public class Bus implements Serializable { // Implementar Serializable
     private double subscriptionPrice;
     private boolean hasSubscription; // Nuevo campo para verificar si el usuario tiene suscripción
 
-    // Constructor vacío para Firebase
     public Bus() {
     }
 
-    // Constructor
     public Bus(String id, String mainImageUrl, List<String> imageUrls, double ticketPrice, double subscriptionPrice, boolean hasSubscription) {
         this.id = id;
         this.mainImageUrl = mainImageUrl;
@@ -25,7 +23,6 @@ public class Bus implements Serializable { // Implementar Serializable
         this.hasSubscription = hasSubscription;
     }
 
-    // Getters y Setters
     public String getId() {
         return id;
     }

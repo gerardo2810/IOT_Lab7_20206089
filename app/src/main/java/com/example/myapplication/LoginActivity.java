@@ -52,7 +52,6 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             String userId = auth.getCurrentUser().getUid();
 
-                            // Obtener datos del usuario desde Firestore
                             db.collection("users").document(userId).get()
                                     .addOnSuccessListener(documentSnapshot -> {
                                         if (documentSnapshot.exists()) {
@@ -84,19 +83,17 @@ public class LoginActivity extends AppCompatActivity {
         String role = documentSnapshot.getString("role");
 
         if ("usuario".equalsIgnoreCase(role)) {
-            // Redirigir a UserHomeActivity
             Intent intent = new Intent(this, UserHomeActivity.class);
             intent.putExtra("nombre", documentSnapshot.getString("nombre"));
             intent.putExtra("apellido", documentSnapshot.getString("apellido"));
             startActivity(intent);
-            finish(); // Finalizar LoginActivity
+            finish();
         } else if ("transportista".equalsIgnoreCase(role)) {
-            // Redirigir a TransportHomeActivity
             Intent intent = new Intent(this, TransportHomeActivity.class);
             intent.putExtra("nombre", documentSnapshot.getString("nombre"));
             intent.putExtra("apellido", documentSnapshot.getString("apellido"));
             startActivity(intent);
-            finish(); // Finalizar LoginActivity
+            finish();
         } else {
             Toast.makeText(this, "Rol no reconocido.", Toast.LENGTH_SHORT).show();
         }

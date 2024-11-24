@@ -23,7 +23,7 @@ import java.util.Map;
 public class UserHomeActivity extends AppCompatActivity {
     private RecyclerView rvBusLines;
     private TextView tvBalance;
-    private double balance = 50.0; // Saldo inicial predeterminado
+    private double balance = 50.0;
     private FirebaseAuth auth;
     private FirebaseFirestore db;
     private TextView userNameText;
@@ -33,19 +33,16 @@ public class UserHomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
 
-        // Inicializar Firebase Auth y Firestore
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
         rvBusLines = findViewById(R.id.rv_bus_lines);
         tvBalance = findViewById(R.id.tv_balance);
-        userNameText = findViewById(R.id.toolbar_user_name); // Referencia al TextView dentro del Toolbar
+        userNameText = findViewById(R.id.toolbar_user_name);
         findViewById(R.id.logout_button).setOnClickListener(v -> logout());
 
-        // Obtener nombre del usuario logueado y su saldo
         fetchUserName();
 
-        // Configurar RecyclerView
         rvBusLines.setLayoutManager(new LinearLayoutManager(this));
         fetchBusesFromDatabase();
         configureQRButton();
@@ -55,11 +52,9 @@ public class UserHomeActivity extends AppCompatActivity {
         String userId = auth.getCurrentUser().getUid();
         db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
-                // Verificar si los campos existen
                 String nombre = documentSnapshot.getString("nombre");
                 String apellido = documentSnapshot.getString("apellido");
 
-                // Manejar el caso de balance null y establecer un saldo inicial si no existe
                 Double balanceValue = documentSnapshot.getDouble("balance");
                 if (balanceValue != null) {
                     balance = balanceValue;
@@ -67,10 +62,8 @@ public class UserHomeActivity extends AppCompatActivity {
                     initializeUserBalance(userId);
                 }
 
-                // Mostrar el saldo actualizado
                 tvBalance.setText("Saldo restante: S/. " + balance);
 
-                // Actualizar el texto en el Toolbar
                 if (nombre != null && apellido != null) {
                     userNameText.setText("Bienvenido, " + nombre + " " + apellido);
                 } else {
@@ -78,7 +71,6 @@ public class UserHomeActivity extends AppCompatActivity {
                     Toast.makeText(this, "Faltan datos de nombre y apellido del usuario.", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                // Si el documento no existe, inicializar el saldo y mostrar valores predeterminados
                 initializeUserBalance(userId);
                 tvBalance.setText("Saldo restante: S/. " + balance);
                 userNameText.setText("Bienvenido, Usuario");
@@ -92,7 +84,6 @@ public class UserHomeActivity extends AppCompatActivity {
     }
 
     private void initializeUserBalance(String userId) {
-        // Establecer el saldo inicial a 50 soles en Firestore
         Map<String, Object> userUpdate = new HashMap<>();
         userUpdate.put("balance", 50.0);
         db.collection("users").document(userId).set(userUpdate, SetOptions.merge())
@@ -110,7 +101,6 @@ public class UserHomeActivity extends AppCompatActivity {
             List<Bus> buses = new ArrayList<>();
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                 try {
-                    // Mapear datos de Firestore a objeto Bus
                     String id = document.getId();
                     String mainImageUrl = document.getString("mainImageUrl");
                     List<String> imageUrls = (List<String>) document.get("imageUrls");
@@ -118,9 +108,8 @@ public class UserHomeActivity extends AppCompatActivity {
                     double subscriptionPrice = document.getDouble("subscriptionPrice");
                     boolean hasSubscription = document.getBoolean("hasSubscription") != null
                             ? document.getBoolean("hasSubscription")
-                            : false; // Valor predeterminado si no está presente
+                            : false;
 
-                    // Crear objeto Bus
                     if (id != null && mainImageUrl != null && imageUrls != null) {
                         buses.add(new Bus(id, mainImageUrl, imageUrls, ticketPrice, subscriptionPrice, hasSubscription));
                     }
@@ -129,7 +118,6 @@ public class UserHomeActivity extends AppCompatActivity {
                 }
             }
 
-            // Configurar RecyclerView con datos de Firestore
             BusAdapter adapter = new BusAdapter(buses, this::onBusDetailsClicked);
             rvBusLines.setAdapter(adapter);
         }).addOnFailureListener(e -> {
