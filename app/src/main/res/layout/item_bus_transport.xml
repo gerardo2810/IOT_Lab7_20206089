@@ -5,12 +5,13 @@
     android:orientation="horizontal"
     android:padding="8dp">
 
-    <!-- Imagen principal del bus -->
     <ImageView
         android:id="@+id/iv_bus_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true" />
+
 
     <!-- Detalles del bus -->
     <TextView

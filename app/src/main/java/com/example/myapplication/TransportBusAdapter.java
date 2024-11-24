@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,5 +65,6 @@ public class TransportBusAdapter extends RecyclerView.Adapter<TransportBusAdapte
 
             btnEdit.setOnClickListener(v -> listener.onEditClick(bus));
         }
+
     }
 }
