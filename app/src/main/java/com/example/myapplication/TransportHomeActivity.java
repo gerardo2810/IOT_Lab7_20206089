@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -81,12 +82,20 @@ public class TransportHomeActivity extends AppCompatActivity {
         db.collection("buses").get().addOnSuccessListener(queryDocumentSnapshots -> {
             List<Bus> buses = new ArrayList<>();
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                String imageUrl = document.getString("mainImageUrl");
+                Log.d("FirestoreCheck", "Bus ID: " + document.getId() + " Image URL: " + imageUrl);
+
+                if (imageUrl == null || imageUrl.isEmpty()) {
+                    Log.e("FirestoreError", "Image URL is null or empty for Bus ID: " + document.getId());
+                }
+
                 try {
                     String id = document.getId();
-                    String imageUrl = document.getString("mainImageUrl");
                     double ticketPrice = document.getDouble("ticketPrice");
                     double subscriptionPrice = document.getDouble("subscriptionPrice");
-                    boolean hasSubscription = document.getBoolean("hasSubscription") != null ? document.getBoolean("hasSubscription") : false;
+                    boolean hasSubscription = document.getBoolean("hasSubscription") != null
+                            ? document.getBoolean("hasSubscription")
+                            : false;
                     List<String> gallery = (List<String>) document.get("imageUrls");
 
                     // Crear objeto Bus

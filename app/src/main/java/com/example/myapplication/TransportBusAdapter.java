@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
@@ -59,12 +60,30 @@ public class TransportBusAdapter extends RecyclerView.Adapter<TransportBusAdapte
             btnEdit = itemView.findViewById(R.id.btn_edit);
         }
 
+
+
         public void bind(Bus bus, OnEditClickListener listener) {
             tvBusId.setText(bus.getId());
-            Glide.with(itemView.getContext()).load(bus.getMainImageUrl()).into(ivBusImage);
 
+
+            // Limpia el ImageView para evitar que Glide cargue imágenes incorrectas en vistas recicladas
+            Glide.with(itemView.getContext()).clear(ivBusImage);
+
+            // Cargar la imagen del bus desde la URL
+            Glide.with(itemView.getContext())
+                    .load(bus.getMainImageUrl())
+                    .diskCacheStrategy(DiskCacheStrategy.NONE) // Opcional para evitar caché (solo para pruebas)
+                    .skipMemoryCache(true) // Opcional para evitar caché en memoria (solo para pruebas)
+                    .placeholder(R.drawable.baseline_fireplace_24) // Imagen mientras carga
+                    .error(R.drawable.baseline_error_24) // Imagen en caso de error
+                    .into(ivBusImage);
+
+            // Listener para el botón de editar
             btnEdit.setOnClickListener(v -> listener.onEditClick(bus));
+            Log.d("GlideURL", "Loading image for bus ID: " + bus.getId() + " URL: " + bus.getMainImageUrl());
+
         }
+
 
     }
 }
